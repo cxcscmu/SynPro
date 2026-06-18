@@ -1,4 +1,6 @@
-# SynPro: Model-Aware Synthetic Data Generation
+# SynPro: Model-Aware Synthetic Data Generation for Data-Bound LLM Pretraining
+
+[![Paper](https://img.shields.io/badge/paper-arXiv-red)](https://arxiv.org/pdf/2605.17849)
 
 > LLM pretraining is shifting from a compute-bound to a data-bound regime, as the supply of high-quality human (organic) text can no longer match scaling demands. SynPro is a model-aware synthetic data generation framework that continuously supplies effective data in the data-bound scaling regime.
 
@@ -214,3 +216,16 @@ All configs use environment variables substituted via `envsubst` at runtime. Req
 | `SYNPRO_DATA` | Path to training JSONL for GRPO generator | `data/training_data.jsonl` |
 
 See `configs/` for templates.
+
+## Citation
+
+If you find this work useful, please consider citing:
+
+```
+@article{yu2026synpro,
+  title={Generating Pretraining Tokens from Organic Data for Data-Bound Scaling},
+  author={Yu, Zichun and Xiong, Chenyan},
+  journal={ArXiv preprint},
+  year={2026}
+}
+```
