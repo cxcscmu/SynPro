@@ -10,8 +10,8 @@ SynPro generates synthetic data optimized via reinforcement learning with **qual
 
 | Component | Model | Details |
 |-|-|-|
-| Downstream (400M) | OLMo-400M | 16L, d=1024, 16H, SwiGLU, RoPE, RMSNorm |
-| Downstream (1.1B) | OLMo-1.1B | 16L, d=2048, 16H, SwiGLU, RoPE, RMSNorm |
+| Pretraining (400M) | OLMo-400M | 16L, d=1024, 16H, SwiGLU, RoPE, RMSNorm |
+| Pretraining (1.1B) | OLMo-1.1B | 16L, d=2048, 16H, SwiGLU, RoPE, RMSNorm |
 | Generator | OLMo-2-1B-Instruct | GRPO fine-tuned with multiple rewards |
 | Quality Scorer | DataMan-1.5B-EN | Text quality evaluation |
 | Faithfulness Verifier | Qwen3-1.7B (SFT) | Source-grounded verification |
@@ -166,7 +166,7 @@ python scripts/convert_text_jsonl.py --reverse \
 
 ## Step 5: Continue Pretraining
 
-Train the downstream model on a mix of organic + synthetic data.
+Pretrain the model on a mix of organic + synthetic data.
 
 ```bash
 export LOAD_PATH=/path/to/current-checkpoint
