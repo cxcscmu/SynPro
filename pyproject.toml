@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "synpro"
+version = "0.1.0"
+description = "SynPro: Model-Aware Synthetic Data Generation"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+include = ["olmo*", "generator*"]

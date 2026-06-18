@@ -1,0 +1,173 @@
+run_name: probe_influence_${CHECKPOINT_NAME}
+seed: 42
+dry_run: false
+
+wandb:
+  name: probe_influence_${CHECKPOINT_NAME}
+  entity: anonymous
+  project: synpro
+  group: OLMo-1.1B_dclm_2.3B_probe_influence
+
+model:
+  d_model: 2048
+  n_heads: 16
+  n_layers: 16
+  mlp_ratio: 8
+  weight_tying: false
+  alibi: false
+  rope: true
+  rope_theta: 500000
+  flash_attention: true
+  attention_dropout: 0.0
+  include_bias: false
+  block_type: sequential
+  layer_norm_type: rms
+  layer_norm_with_affine: true
+  layer_norm_eps: 1e-6
+  bias_for_layer_norm: false
+  attention_layer_norm: true
+  attention_layer_norm_with_affine: true
+  norm_after: true
+  activation_type: swiglu
+  residual_dropout: 0.0
+  embedding_dropout: 0.0
+  max_sequence_length: 2048
+  vocab_size: 100278
+  embedding_size: 100352
+  eos_token_id: 100257
+  pad_token_id: 100277
+  init_device: meta
+  init_fn: normal
+  init_std: 0.02
+  init_cutoff_factor: 3
+
+softmax_auxiliary_loss: true
+auxiliary_loss_multiplier: 1e-5
+fused_loss: true
+
+compile: null
+
+optimizer:
+  name: adamw
+  learning_rate: 1.0e-4
+  weight_decay: 0.1
+  eps: 1e-8
+  decay_norm_and_bias: true
+  decay_embeddings: false
+  betas:
+  - 0.9
+  - 0.95
+  metrics_log_interval: 1
+
+scheduler:
+  # name: cosine_with_warmup
+  name: constant
+  units: steps
+  t_warmup: 10
+  alpha_f: 0.1
+  warmup_min_lr: 0
+
+tokenizer:
+  identifier: tokenizers/dolma2.json
+  truncate_direction: right
+
+save_folder: ${OUTPUT_DIR}
+save_overwrite: true
+
+save_interval: null
+save_interval_ephemeral: null
+save_num_checkpoints_to_keep: 0
+sharded_checkpointer: olmo_core
+
+save_interval_unsharded: 100000
+save_num_unsharded_checkpoints_to_keep: 1
+
+load_path: ${CHECKPOINT_DIR}
+
+restore_dataloader: false
+keep_global_step: true
+reset_optimizer_state: false
+reset_trainer_state: false
+no_pre_train_checkpoint: true
+
+max_duration: 100
+global_train_batch_size: 64
+device_train_microbatch_size: 8
+
+precision: amp_bf16
+
+fsdp:
+  wrapping_strategy: null
+  sharding_strategy: SHARD_GRAD_OP
+  precision: mixed
+
+max_grad_norm: 1.0
+max_grad_norm_ratio: null
+
+speed_monitor:
+  window_size: 1
+
+gen1_gc_interval: 10
+
+eval_on_load: false
+eval_interval: 80000
+eval_subset_num_batches: -1
+device_eval_batch_size: 16
+evaluators:
+  # - label: dclm-ppl-validation
+  #   data:
+  #     paths:
+  #       - ${LOCAL_ROOT}/data/preprocessed/dclm/v0_rep32_ft7percentile_fw2/documents/data/dolma2-tokenizer/0013/part-15-00000.npy
+  #       - ${LOCAL_ROOT}/data/preprocessed/dclm/v0_rep32_ft7percentile_fw2/documents/data/dolma2-tokenizer/0027/part-24-00000.npy
+  #       - ${LOCAL_ROOT}/data/preprocessed/dclm/v0_rep32_ft7percentile_fw2/documents/data/dolma2-tokenizer/0028/part-14-00000.npy
+
+  ##########################
+  # Downstream evaluations #
+  ##########################
+  - label: piqa
+    type: downstream
+
+  - label: hellaswag
+    type: downstream
+
+  - label: winogrande
+    type: downstream
+
+  - label: openbook_qa
+    type: downstream
+
+  - label: boolq
+    type: downstream
+
+  - label: sciq
+    type: downstream
+
+  - label: arc_easy
+    type: downstream
+
+  - label: arc_challenge
+    type: downstream
+
+  - label: commonsense_qa
+    type: downstream
+
+  - label: social_iqa
+    type: downstream
+
+data:
+  pad_direction: right
+  # generate_doc_lengths: true
+  num_workers: 32
+  drop_last: true
+  pin_memory: true
+  prefetch_factor: 8
+  persistent_workers: true
+  memmap_dtype: uint32
+  timeout: 0
+  # paths:
+    # - ${LOCAL_ROOT}/data/preprocessed/dclm/v0_rep32_ft7percentile_fw2/documents/data/dolma2-tokenizer/0000/part-00-00000.npy
+  # SOURCE: FLAN_V2 0.2B data
+  paths:
+    - ${LOCAL_ROOT}/data/preprocessed/flan/input_ids.npy
+  label_mask_paths:
+    - ${LOCAL_ROOT}/data/preprocessed/flan/label_mask.npy
