@@ -79,17 +79,6 @@ torchrun --nproc_per_node=$(nvidia-smi -L | wc -l) \
 # Output: ${OUTPUT_DIR}/influence.npy
 ```
 
-### Data Selection (Optional)
-
-Select top-K data by influence score for selective pretraining:
-
-```bash
-python scripts/select_data.py /tmp/probe_eval.yaml \
-    --metrics-file ${OUTPUT_DIR}/influence.npy \
-    --sample-ratio 0.5 \
-    --output /path/to/selected_data.npy
-```
-
 ## Step 2a: Rephrase Generator Training
 
 Trains a generator to rephrase text, optimized with influence + quality + similarity rewards.
